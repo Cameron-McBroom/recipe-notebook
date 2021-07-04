@@ -46,10 +46,11 @@ passport.deserializeUser(async (userId, done) => {
 
 		const user = queryResult.rows[0]
 
-		if (!user)
-			done(null, user)
+		user ? done(null, user) : done(null, false)
 	}
 	catch(error) {
 		done(err)
 	}
+
+
 })

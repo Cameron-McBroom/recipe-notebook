@@ -2,6 +2,7 @@ const router = require('express').Router();
 const passport = require('passport');
 const {genPassword} = require('../lib/passwordUtils');
 const pool = require("../db")
+const {isAuth} = require("./authMiddleware")
 
 
 /**
@@ -102,12 +103,15 @@ router.get('/login-failure', (req, res, next) => {
 });
 
 
-router.post("/todos", async(req, res) => {
-    try {
-        const { description } = req.body;
-        const newTodo = await pool.query("INSERT INTO todo (description) VALUES($1) RETURNING *",
-            [description])
+router.post("/todos", isAuth, async(req, res) => {
 
+    try {
+        const userId = req.user.id;
+        const { description } = req.body;
+        const newTodo = await pool.query("INSERT INTO todo (description, user_id) VALUES($1, $2) RETURNING *",
+            [description, userId])
+
+        console.log("todo added", newTodo.rows[0])
         res.json(newTodo.rows[0]);
     }
     catch (err) {
@@ -116,11 +120,14 @@ router.post("/todos", async(req, res) => {
     }
 });
 
-router.get("/todos", async (req, res) => {
-    try {
-        const allTodos = await pool.query("SELECT * FROM todo");
 
-        res.json(allTodos.rows)
+router.get("/todos", isAuth, async (req, res) => {
+    try {
+        const userId = req.user.id;
+
+        const allTodos = await pool.query("SELECT * FROM todo WHERE user_id = ($1)", [userId]);
+
+        res.status(200).json(allTodos.rows)
 
     } catch (error) {
 
@@ -128,13 +135,15 @@ router.get("/todos", async (req, res) => {
     }
 })
 
-router.get("/todos/:id", async (req, res) => {
+router.get("/todos/:id", isAuth, async (req, res) => {
     try {
         const {id} = req.params;
+        const userId = req.user.id;
 
-        const todo = await pool.query("SELECT * FROM todo WHERE todo_id = $1", [id])
+        const todo = await pool.query("SELECT * FROM todo WHERE todo_id = $1 AND user_id = $2",
+            [id, userId])
 
-        res.json(todo.rows[0])
+        res.status(200).json(todo.rows[0])
 
     } catch (error) {
 
