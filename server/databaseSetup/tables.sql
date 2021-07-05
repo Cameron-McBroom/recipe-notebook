@@ -3,26 +3,26 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- Tables
 CREATE TABLE user_account (
-                              id uuid DEFAULT uuid_generate_v4(),
-                              password VARCHAR NOT NULL ,
-                              email VARCHAR NOT NULL ,
-                              salt VARCHAR NOT NULL ,
-                              PRIMARY KEY(id)
+      id uuid DEFAULT uuid_generate_v4(),
+      password VARCHAR NOT NULL ,
+      email VARCHAR NOT NULL ,
+      salt VARCHAR NOT NULL ,
+      PRIMARY KEY(id)
 );
 
 CREATE TABLE todo (
-                      todo_id uuid DEFAULT uuid_generate_v4() ,
-                      description VARCHAR(255) NOT NULL,
-                      user_id uuid NOT NULL,
-                      PRIMARY KEY (todo_id),
-                      CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES user_account(id)
+      todo_id uuid DEFAULT uuid_generate_v4() ,
+      description VARCHAR(255) NOT NULL,
+      user_id uuid NOT NULL,
+      PRIMARY KEY (todo_id),
+      CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES user_account(id)
 );
 
 -- Configuration for pg-connect-simple
 CREATE TABLE "session" (
-                           "sid" varchar NOT NULL COLLATE "default",
-                           "sess" json NOT NULL,
-                           "expire" timestamp(6) NOT NULL
+       "sid" varchar NOT NULL COLLATE "default",
+       "sess" json NOT NULL,
+       "expire" timestamp(6) NOT NULL
 )
     WITH (OIDS=FALSE);
 
