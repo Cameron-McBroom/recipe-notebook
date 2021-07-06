@@ -4,7 +4,8 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "setup-db": "./scripts/database-setup.js"
   },
   "keywords": [],
   "author": "",
@@ -18,6 +19,7 @@
     "nodemon": "^2.0.9",
     "passport": "^0.4.1",
     "passport-local": "^1.0.0",
-    "pg": "^8.6.0"
+    "pg": "^8.6.0",
+    "pgtools": "^0.3.2"
   }
 }
